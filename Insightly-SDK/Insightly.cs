@@ -113,7 +113,7 @@ namespace InsightlySDK{
 		/// <param name='order_by'>
 		/// Name of field(s) by which to order the result set.
 		/// </param>
-		public Task<JArray> GetContacts(List<int> ids=null, string email=null, string tag=null,
+		public Task<Contact[]> GetContacts(List<int> ids=null, string email=null, string tag=null,
 		                          List<string> filters=null, int? top=null, int? skip=null, string order_by=null){
 			var request = this.Get("/v2.1/Contacts");
 			BuildODataQuery(request, filters: filters, top: top, skip: skip, order_by: order_by);
@@ -126,7 +126,7 @@ namespace InsightlySDK{
 			if(tag != null){
 				request.WithQueryParam("tag", tag);
 			}
-			return request.AsJson<JArray>();
+            return request.AsJson<Contact[]>();
 		}
 
 		/// <summary>
@@ -154,17 +154,18 @@ namespace InsightlySDK{
 		/// then a new contact will be created.
 		/// Otherwise, the contact with that id will be updated.
 		/// </param>
-		public Task<JObject> AddContact(JObject contact){
+        public Task<Contact> AddContact(Contact contact)
+        {
 			var request = this.Request("/v2.1/Contacts");
 			
-			if((contact["CONTACT_ID"] != null) && (contact["CONTACT_ID"].Value<int>() > 0)){
+			if((contact.Id != null) && (contact.Id > 0)){
 				request.WithMethod(HTTPMethod.PUT);
 			}
 			else{
 				request.WithMethod(HTTPMethod.POST);
 			}
-			
-			return request.WithBody(contact).AsJson<JObject>();
+
+            return request.WithBody(contact).AsJson<Contact>();
 		}
 		
 		/// <summary>
@@ -1434,12 +1435,13 @@ namespace InsightlySDK{
 			// Test GetContacts()
 			try{
                 var contacts = await this.GetContacts(order_by: "DATE_UPDATED_UTC desc", top: top);
-				Console.WriteLine("PASS: GetContacts(), found " + contacts.Count + " contacts.");
+				Console.WriteLine("PASS: GetContacts(), found " + contacts.Length + " contacts.");
 				passed += 1;
-				
-				if(contacts.Count > 0){
-					JObject contact = contacts[0].Value<JObject>();
-					int contact_id = contact["CONTACT_ID"].Value<int>();
+
+                if (contacts.Length > 0)
+                {
+                    var contact = contacts[0];
+                    int contact_id = contact.Id.Value;
 					
 					// Test GetContactEmails()
 					try{
@@ -1481,18 +1483,21 @@ namespace InsightlySDK{
 			}
 			
 			// Test AddContact()
-			try{
-				var contact = new JObject();
-				contact["SALUTATION"] = "Mr";
-				contact["FIRST_NAME"] = "Testy";
-				contact["LAST_NAME"] = "McTesterson";
+			try
+			{
+			    var contact = new Contact()
+			    {
+			        Salutation = "Mr",
+			        FirstName = "Testy",
+			        LastName = "McTesterson"
+			    };
                 contact = await this.AddContact(contact);
 				Console.WriteLine("PASS: AddContact()");
 				passed += 1;
 				
 				// Test DeleteContact()
 				try{
-					this.DeleteContact(contact["CONTACT_ID"].Value<int>());
+					this.DeleteContact(contact.Id.Value);
 					Console.WriteLine("PASS: DeleteContact()");
 					passed += 1;
 				}
