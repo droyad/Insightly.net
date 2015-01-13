@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace InsightlySDK{
@@ -21,7 +22,7 @@ namespace InsightlySDK{
 			this.query_params = new List<string>();
 		}
 		
-		public Stream AsInputStream(){
+		public async Task<Stream> AsInputStream(){
 			var url = new UriBuilder(BASE_URL);
 			url.Path = this.url_path;
 			
@@ -40,20 +41,20 @@ namespace InsightlySDK{
 				writer.Close();
 			}
 			
-			var response = request.GetResponse();
+			var response = await request.GetResponseAsync();
 			return response.GetResponseStream();
 		}
 		
-		public Object AsJson(){
+		public Task<Object> AsJson(){
 			return this.AsJson<Object>();
 		}
 		
-		public T AsJson<T>(){
-			return JsonConvert.DeserializeObject<T>(this.AsString());
+		public async Task<T> AsJson<T>(){
+			return JsonConvert.DeserializeObject<T>(await this.AsString());
 		}
 		
-		public string AsString(){
-			return (new StreamReader(this.AsInputStream())).ReadToEnd();
+		public async Task<string> AsString(){
+			return (new StreamReader(await this.AsInputStream())).ReadToEnd();
 		}
 		
 		public InsightlyRequest WithBody(string contents){

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace InsightlySDK{
@@ -36,7 +36,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// ID of object to get comments of
 		/// </param>
-		public JArray GetComments(int id){
+		public Task<JArray> GetComments(int id){
 			return this.Get("/v2.1/Comments/" + id).AsJson<JArray>();
 		}
 		
@@ -70,7 +70,7 @@ namespace InsightlySDK{
 		/// <exception cref='ArgumentException'>
 		/// Thrown if body is null or zero-length.
 		/// </exception>
-		public JObject UpdateComment(string body, int owner_user_id, int? comment_id=null){
+		public Task<JObject> UpdateComment(string body, int owner_user_id, int? comment_id=null){
 			if((body == null) || (body.Length < 1)){
 				throw new ArgumentException("Comment body cannot be empty.");
 			}
@@ -113,7 +113,7 @@ namespace InsightlySDK{
 		/// <param name='order_by'>
 		/// Name of field(s) by which to order the result set.
 		/// </param>
-		public JArray GetContacts(List<int> ids=null, string email=null, string tag=null,
+		public Task<JArray> GetContacts(List<int> ids=null, string email=null, string tag=null,
 		                          List<string> filters=null, int? top=null, int? skip=null, string order_by=null){
 			var request = this.Get("/v2.1/Contacts");
 			BuildODataQuery(request, filters: filters, top: top, skip: skip, order_by: order_by);
@@ -138,7 +138,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// CONTACT_ID of desired contact.
 		/// </param>
-		public JObject GetContact(int id){
+		public Task<JObject> GetContact(int id){
 			return this.Get("/v2.1/Contacts/" + id).AsJson<JObject>();
 		}
 		
@@ -154,7 +154,7 @@ namespace InsightlySDK{
 		/// then a new contact will be created.
 		/// Otherwise, the contact with that id will be updated.
 		/// </param>
-		public JObject AddContact(JObject contact){
+		public Task<JObject> AddContact(JObject contact){
 			var request = this.Request("/v2.1/Contacts");
 			
 			if((contact["CONTACT_ID"] != null) && (contact["CONTACT_ID"].Value<int>() > 0)){
@@ -186,7 +186,7 @@ namespace InsightlySDK{
 		/// <param name='contact_id'>
 		/// A contact's CONTACT_ID
 		/// </param>
-		public JArray GetContactEmails(int contact_id){
+		public Task<JArray> GetContactEmails(int contact_id){
 			return this.Get("/v2.1/Contacts/" + contact_id + "/Emails")
 				.AsJson<JArray>();
 		}
@@ -200,7 +200,7 @@ namespace InsightlySDK{
 		/// <param name='contact_id'>
 		/// A contact's CONTACT_ID.
 		/// </param>
-		public JArray GetContactNotes(int contact_id){
+		public Task<JArray> GetContactNotes(int contact_id){
 			return this.Get("/v2.1/Contacts/" + contact_id + "/Notes")
 				.AsJson<JArray>();
 		}
@@ -214,7 +214,7 @@ namespace InsightlySDK{
 		/// <param name='contact_id'>
 		/// A contact's CONTACT_ID.
 		/// </param>
-		public JArray GetContactTasks(int contact_id){
+		public Task<JArray> GetContactTasks(int contact_id){
 			return this.Get("/v2.1/Contacts/" + contact_id + "/Tasks")
 				.AsJson<JArray>();
 		}
@@ -225,7 +225,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// The countries recognized by Insightly.
 		/// </returns>
-		public JArray GetCountries(){
+		public Task<JArray> GetCountries(){
 			return this.Get("/v2.1/Countries").AsJson<JArray>();
 		}
 		
@@ -235,7 +235,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// The currencies recognized by Insightly.
 		/// </returns>
-		public JArray GetCurrencies(){
+		public Task<JArray> GetCurrencies(){
 			return this.Get("/v2.1/Currencies").AsJson<JArray>();
 		}
 		
@@ -245,7 +245,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// The custom fields.
 		/// </returns>
-		public JArray GetCustomFields(){
+		public Task<JArray> GetCustomFields(){
 			return this.Get ("/v2.1/CustomFields").AsJson<JArray>();
 		}
 		
@@ -258,7 +258,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// Custom field id.
 		/// </param>
-		public JObject GetCustomField(int id){
+		public Task<JObject> GetCustomField(int id){
 			return this.Get ("/v2.1/CustomFields/" + id).AsJson<JObject>();
 		}
 		
@@ -280,7 +280,7 @@ namespace InsightlySDK{
 		/// <param name='filters'>
 		/// OData filters.
 		/// </param>
-		public JArray GetEmails(int? top=null, int? skip=null,
+		public Task<JArray> GetEmails(int? top=null, int? skip=null,
 		                        string order_by=null, List<string> filters=null){
 			var request = this.Get("/v2.1/Emails");
 			BuildODataQuery(request, top: top, skip: skip, order_by: order_by, filters: filters);
@@ -296,7 +296,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// ID of email to get.
 		/// </param>
-		public JObject GetEmail(int id){
+		public Task<JObject> GetEmail(int id){
 			return this.Get("/v2.1/Emails/" + id).AsJson<JObject>();
 		}
 		
@@ -319,7 +319,7 @@ namespace InsightlySDK{
 		/// <param name='email_id'>
 		/// Email id.
 		/// </param>
-		public JArray GetEmailComments(int email_id){
+		public Task<JArray> GetEmailComments(int email_id){
 			return this.Get ("/v2.1/Emails/" + email_id + "/Comments").AsJson<JArray>();
 		}
 		
@@ -338,7 +338,7 @@ namespace InsightlySDK{
 		/// <param name='owner_user_id'>
 		/// Owner's user id.
 		/// </param>
-		public JObject AddCommentToEmail(int email_id, string body, int owner_user_id){
+		public Task<JObject> AddCommentToEmail(int email_id, string body, int owner_user_id){
 			var data = new JObject();
 			data["BODY"] = body;
 			data["OWNER_USER_ID"] = owner_user_id;
@@ -364,7 +364,7 @@ namespace InsightlySDK{
 		/// <param name='filters'>
 		/// If provided, specifies a list of OData filters.
 		/// </param>
-		public JArray GetEvents(int? top=null, int? skip=null,
+		public Task<JArray> GetEvents(int? top=null, int? skip=null,
 		                        string order_by=null, List<string> filters=null){
 			var request = this.Get("/v2.1/Events");
 			BuildODataQuery(request, top: top, skip: skip, order_by: order_by, filters: filters);
@@ -380,7 +380,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// EVENT_ID of the desired event.
 		/// </param>
-		public JObject GetEvent(int id){
+		public Task<JObject> GetEvent(int id){
 			return this.Get("/v2.1/Events/" + id).AsJson<JObject>();
 		}
 		
@@ -393,7 +393,7 @@ namespace InsightlySDK{
 		/// <param name='the_event'>
 		/// The event to add/update.
 		/// </param>
-		public JObject AddEvent(JObject the_event){
+		public Task<JObject> AddEvent(JObject the_event){
 			var request = Request("/v2.1/Events");
 			
 			if((the_event["EVENT_ID"] != null) && (the_event["EVENT_ID"].Value<int>() > 0)){
@@ -422,7 +422,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// The file categories for this account.
 		/// </returns>
-		public JArray GetFileCategories(){
+		public Task<JArray> GetFileCategories(){
 			return this.Get("/v2.1/FileCategories").AsJson<JArray>();
 		}
 		
@@ -435,7 +435,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// CATEGORY_ID of desired category.
 		/// </param>
-		public JObject GetFileCategory(int id){
+		public Task<JObject> GetFileCategory(int id){
 			return this.Get("/v2.1/FileCategories/" + id).AsJson<JObject>();
 		}
 		
@@ -448,7 +448,7 @@ namespace InsightlySDK{
 		/// <param name='category'>
 		/// The category to add/update.
 		/// </param>
-		public JObject AddFileCategory(JObject category){
+		public Task<JObject> AddFileCategory(JObject category){
 			var request = this.Request("/v2.1/FileCategories");
 			
 			if((category["CATEGORY_ID"] != null) && (category["CATEGORY_ID"].Value<int>() > 0)){
@@ -489,7 +489,7 @@ namespace InsightlySDK{
 		/// <param name='filters'>
 		/// List of OData filters to apply to results.
 		/// </param>
-		public JArray GetNotes(int? top=null, int? skip=null,
+		public Task<JArray> GetNotes(int? top=null, int? skip=null,
 		                       string order_by=null, List<string> filters=null){
 			var request = this.Get("/v2.1/Notes");
 			BuildODataQuery(request, top: top, skip: skip, order_by: order_by, filters: filters);
@@ -505,7 +505,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// <c>NOTE_ID</c> of desired note.
 		/// </param>
-		public JObject GetNote(int id){
+		public Task<JObject> GetNote(int id){
 			return this.Get("/v2.1/Notes/" + id).AsJson<JObject>();
 		}
 
@@ -518,7 +518,7 @@ namespace InsightlySDK{
 		/// <param name='note'>
 		/// The note object to add or update.
 		/// </param>
-		public JObject AddNote(JObject note){
+		public Task<JObject> AddNote(JObject note){
 			var request = this.Request("/v2.1/Notes");
 			
 			if(IsValidId(note["NOTE_ID"])){
@@ -550,7 +550,7 @@ namespace InsightlySDK{
 		/// <param name='note_id'>
 		/// <c>NOTE_ID</c> of desired note.
 		/// </param>
-		public JObject GetNoteComments(int note_id){
+		public Task<JObject> GetNoteComments(int note_id){
 			return this.Get("/v2.1/Notes/" + note_id + "/Comments")
 				.AsJson<JObject>();
 		}
@@ -567,7 +567,7 @@ namespace InsightlySDK{
 		/// <param name='comment'>
 		/// The comment to attach to the note.
 		/// </param>
-		public JObject AddNoteComment(int note_id, JObject comment){
+		public Task<JObject> AddNoteComment(int note_id, JObject comment){
 			return this.Post("/v2.1/Notes/" + note_id + "/Comments")
 				.WithBody(comment).AsJson<JObject>();
 		}
@@ -590,7 +590,7 @@ namespace InsightlySDK{
 		/// <param name='filters'>
 		/// List of OData filters to apply to query.
 		/// </param>
-		public JArray GetOpportunities(int? top=null, int? skip=null,
+		public Task<JArray> GetOpportunities(int? top=null, int? skip=null,
 		                               string order_by=null, List<string> filters=null){
 			var request = this.Get("/v2.1/Opportunities");
 			BuildODataQuery(request, top: top, skip: skip, order_by: order_by, filters: filters);
@@ -606,7 +606,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// OPPORTUNITY_ID of desired opportunity.
 		/// </param>
-		public JObject GetOpportunity(int id){
+		public Task<JObject> GetOpportunity(int id){
 			return this.Get("/v2.1/Opportunities/" + id).AsJson<JObject>();
 		}
 		
@@ -619,7 +619,7 @@ namespace InsightlySDK{
 		/// <param name='opportunity'>
 		/// The opportunity to add/update.
 		/// </param>
-		public JObject AddOpportunity(JObject opportunity){
+		public Task<JObject> AddOpportunity(JObject opportunity){
 			var request = this.Request("/v2.1/Opportunities");
 			
 			if(IsValidId(opportunity["OPPORTUNITY_ID"])){
@@ -651,7 +651,7 @@ namespace InsightlySDK{
 		/// <param name='opportunity_id'>
 		/// OPPORTUNITY_ID of opportunity to get history of.
 		/// </param>
-		public JArray GetOpportunityStateHistory(int opportunity_id){
+		public Task<JArray> GetOpportunityStateHistory(int opportunity_id){
 			return this.Get("/v2.1/Opportunities/" + opportunity_id + "/StateHistory")
 				.AsJson<JArray>();
 		}
@@ -665,7 +665,7 @@ namespace InsightlySDK{
 		/// <param name='opportunity_id'>
 		/// OPPORTUNITY_ID of desired opportunity.
 		/// </param>
-		public JArray GetOpportunityEmails(int opportunity_id){
+		public Task<JArray> GetOpportunityEmails(int opportunity_id){
 			return this.Get("/v2.1/Opportunities/" + opportunity_id + "/Emails")
 				.AsJson<JArray>();
 		}
@@ -679,7 +679,7 @@ namespace InsightlySDK{
 		/// <param name='opportunity_id'>
 		/// OPPORTUNITY_ID of desired opportunity.
 		/// </param>
-		public JArray GetOpportunityNotes(int opportunity_id){
+		public Task<JArray> GetOpportunityNotes(int opportunity_id){
 			return this.Get("/v2.1/Opportunities/" + opportunity_id + "/Notes")
 				.AsJson<JArray>();
 		}
@@ -693,7 +693,7 @@ namespace InsightlySDK{
 		/// <param name='opportunity_id'>
 		/// OPPORTUNITY_ID of desired opportunity.
 		/// </param>
-		public JArray GetOpportunityTasks(int opportunity_id){
+		public Task<JArray> GetOpportunityTasks(int opportunity_id){
 			return this.Get("/v2.1/Opportunities/" + opportunity_id + "/Tasks")
 				.AsJson<JArray>();
 		}
@@ -704,7 +704,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// The opportunity categories.
 		/// </returns>
-		public JArray GetOpportunityCategories(){
+		public Task<JArray> GetOpportunityCategories(){
 			return this.Get("/v2.1/OpportunityCategories")
 				.AsJson<JArray>();
 		}
@@ -718,7 +718,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// CATEGORY_ID of desired opportunity category.
 		/// </param>
-		public JObject GetOpportunityCategoriy(int id){
+		public Task<JObject> GetOpportunityCategoriy(int id){
 			return this.Get("/v2.1/OpportunityCategories/" + id)
 				.AsJson<JObject>();
 		}
@@ -732,7 +732,7 @@ namespace InsightlySDK{
 		/// <param name='category'>
 		/// The category to add/update.
 		/// </param>
-		public JObject AddOpportunityCategory(JObject category){
+		public Task<JObject> AddOpportunityCategory(JObject category){
 			var request = this.Request("/v2.1/OpportunityCategories");
 			
 			if(IsValidId(category["CATEGORY_ID"])){
@@ -761,7 +761,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// The opportunity state reasons.
 		/// </returns>
-		public JArray GetOpportunityStateReasons(){
+		public Task<JArray> GetOpportunityStateReasons(){
 			return this.Get("/v2.1/OpportunityStateReasons")
 				.AsJson<JArray>();
 		}
@@ -793,7 +793,7 @@ namespace InsightlySDK{
 		/// <param name='filters'>
 		/// List of OData filters statements to apply.
 		/// </param>
-		public JArray GetOrganizations(List<int> ids=null, string domain=null, string tag=null,
+		public Task<JArray> GetOrganizations(List<int> ids=null, string domain=null, string tag=null,
 		                               int? top=null, int? skip=null, string order_by=null, List<string> filters=null){
 			var request = this.Get("/v2.1/Organisations");
 			BuildODataQuery(request, top: top, skip: skip, order_by: order_by, filters: filters);
@@ -820,7 +820,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// <c>ORGANISATION_ID</c> of desired organization.
 		/// </param>
-		public JObject GetOrganization(int id){
+		public Task<JObject> GetOrganization(int id){
 			return this.Get("/v2.1/Organisations/" + id).AsJson<JObject>();
 		}
 
@@ -833,7 +833,7 @@ namespace InsightlySDK{
 		/// <param name='organization'>
 		/// Organization to add/update.
 		/// </param>
-		public JObject AddOrganization(JObject organization){
+		public Task<JObject> AddOrganization(JObject organization){
 			var request = this.Request("/v2.1/Organisations");
 			
 			if(IsValidId(organization["ORGANISATION_ID"])){
@@ -865,7 +865,7 @@ namespace InsightlySDK{
 		/// <param name='organization_id'>
 		/// <c>ORGANISATION_ID</c> of desired organization.
 		/// </param>
-		public JArray GetOrganizationEmails(int organization_id){
+		public Task<JArray> GetOrganizationEmails(int organization_id){
 			return this.Get("/v2.1/Organisations/" + organization_id + "/Emails")
 				.AsJson<JArray>();
 		}
@@ -879,7 +879,7 @@ namespace InsightlySDK{
 		/// <param name='organization_id'>
 		/// <c>ORGANISATION_ID</c> of desired organization.
 		/// </param>
-		public JArray GetOrganizationNotes(int organization_id){
+		public Task<JArray> GetOrganizationNotes(int organization_id){
 			return this.Get("/v2.1/Organisations/" + organization_id + "/Notes")
 				.AsJson<JArray>();
 		}
@@ -893,7 +893,7 @@ namespace InsightlySDK{
 		/// <param name='organization_id'>
 		/// <c>ORGANISATION_ID</c> of desired organization.
 		/// </param>
-		public JArray GetOrganizationTasks(int organization_id){
+		public Task<JArray> GetOrganizationTasks(int organization_id){
 			return this.Get("/v2.1/Organisations/" + organization_id + "/Tasks")
 				.AsJson<JArray>();
 		}
@@ -904,7 +904,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// The pipelines.
 		/// </returns>
-		public JArray GetPipelines(){
+		public Task<JArray> GetPipelines(){
 			return this.Get("/v2.1/Pipelines").AsJson<JArray>();
 		}
 		
@@ -917,7 +917,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// Pipeline id.
 		/// </param>
-		public JObject GetPipeline(int id){
+		public Task<JObject> GetPipeline(int id){
 			return this.Get("/v2.1/Pipelines/" + id).AsJson<JObject>();
 		}
 		
@@ -927,7 +927,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// The pipeline stages.
 		/// </returns>
-		public JArray GetPipelineStages(){
+		public Task<JArray> GetPipelineStages(){
 			return this.Get("/v2.1/PipelineStages").AsJson<JArray>();
 		}
 		
@@ -940,7 +940,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// Pipeline stage's id.
 		/// </param>
-		public JObject GetPipelineStage(int id){
+		public Task<JObject> GetPipelineStage(int id){
 			return this.Get("v2.1/PipelineStages/" + id).AsJson<JObject>();
 		}
 		
@@ -950,7 +950,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// The project categories.
 		/// </returns>
-		public JArray GetProjectCategories(){
+		public Task<JArray> GetProjectCategories(){
 			return this.Get("/v2.1/ProjectCategories").AsJson<JArray>();
 		}
 		
@@ -963,7 +963,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// <c>CATEGORY_ID</c> of desired category.
 		/// </param>
-		public JObject GetProjectCategory(int id){
+		public Task<JObject> GetProjectCategory(int id){
 			return this.Get("/v2.1/ProjectCategories/" + id).AsJson<JObject>();
 		}
 
@@ -976,7 +976,7 @@ namespace InsightlySDK{
 		/// <param name='category'>
 		/// The category to add/update.
 		/// </param>
-		public JObject AddProjectCategory(JObject category){
+		public Task<JObject> AddProjectCategory(JObject category){
 			var request = this.Request("/v2.1/ProjectCategories");
 			
 			if(IsValidId(category["CATEGORY_ID"])){
@@ -1017,7 +1017,7 @@ namespace InsightlySDK{
 		/// <param name='filters'>
 		/// List of OData filter statements to apply.
 		/// </param>
-		public JArray GetProjects(int? top=null, int? skip=null,
+		public Task<JArray> GetProjects(int? top=null, int? skip=null,
 		                          string order_by = null, List<string> filters=null){
 			var request = this.Get("/v2.1/Projects");
 			BuildODataQuery(request, top: top, skip: skip, order_by: order_by, filters: filters);
@@ -1033,7 +1033,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// <c>PROJECT_ID</c> of desired project.
 		/// </param>
-		public JObject GetProject(int id){
+		public Task<JObject> GetProject(int id){
 			return this.Get("/v2.1/Projects/" + id).AsJson<JObject>();
 		}
 		
@@ -1046,7 +1046,7 @@ namespace InsightlySDK{
 		/// <param name='project'>
 		/// Project to add/update.
 		/// </param>
-		public JObject AddProject(JObject project){
+		public Task<JObject> AddProject(JObject project){
 			var request = this.Request("/v2.1/Projects");
 			
 			if(IsValidId(project["PROJECT_ID"])){
@@ -1078,7 +1078,7 @@ namespace InsightlySDK{
 		/// <param name='project_id'>
 		/// <c>PROJECT_ID</c> of desired project.
 		/// </param>
-		public JArray GetProjectEmails(int project_id){
+		public Task<JArray> GetProjectEmails(int project_id){
 			return this.Get("/v2.1/Projects/" + project_id + "/Emails")
 				.AsJson<JArray>();
 		}
@@ -1092,7 +1092,7 @@ namespace InsightlySDK{
 		/// <param name='project_id'>
 		/// <c>PROJECT_ID</c> of desired project.
 		/// </param>
-		public JArray GetProjectNotes(int project_id){
+		public Task<JArray> GetProjectNotes(int project_id){
 			return this.Get("/v2.1/Projects/" + project_id + "/Notes")
 				.AsJson<JArray>();
 		}
@@ -1106,7 +1106,7 @@ namespace InsightlySDK{
 		/// <param name='project_id'>
 		/// <c>PROJECT_ID</c> of desired project.
 		/// </param>
-		public JArray GetProjectTasks(int project_id){
+		public Task<JArray> GetProjectTasks(int project_id){
 			return this.Get("/v2.1/Projects/" + project_id + "/Tasks")
 				.AsJson<JArray>();
 		}
@@ -1117,7 +1117,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// The relationships.
 		/// </returns>
-		public JArray GetRelationships(){
+		public Task<JArray> GetRelationships(){
 			return this.Get("/v2.1/Relationships").AsJson<JArray>();
 		}
 		
@@ -1130,7 +1130,7 @@ namespace InsightlySDK{
 		/// <param name='parent_id'>
 		/// The id of the parent object.
 		/// </param>
-		public JArray GetTags(int parent_id){
+		public Task<JArray> GetTags(int parent_id){
 			return this.Get("/v2.1/Tags/" + parent_id).AsJson<JArray>();
 		}
 		
@@ -1155,7 +1155,7 @@ namespace InsightlySDK{
 		/// <param name='filters'>
 		/// List of OData filter statements to apply.
 		/// </param>
-		public JArray GetTasks(List<int> ids=null, int? top=null, int? skip=null,
+		public Task<JArray> GetTasks(List<int> ids=null, int? top=null, int? skip=null,
 		                       string order_by=null, List<string> filters=null){
 			var request = this.Get("/v2.1/Tasks");
 			BuildODataQuery(request, top: top, skip: skip, order_by: order_by, filters: filters);
@@ -1176,7 +1176,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// <c>TASK_ID</c> of desired task.
 		/// </param>
-		public JObject GetTask(int id){
+		public Task<JObject> GetTask(int id){
 			return this.Get("/v2.1/Tasks/" + id).AsJson<JObject>();
 		}
 		
@@ -1189,7 +1189,7 @@ namespace InsightlySDK{
 		/// <param name='task'>
 		/// The task to create/update.
 		/// </param>
-		public JObject AddTask(JObject task){
+		public Task<JObject> AddTask(JObject task){
 			var request = this.Request("/v2.1/Tasks");
 			
 			if(IsValidId(task["TASK_ID"])){
@@ -1222,7 +1222,7 @@ namespace InsightlySDK{
 		/// <param name='task_id'>
 		/// <c>TASK_ID</c> of desired task.
 		/// </param>
-		public JArray GetTaskComments(int task_id){
+		public Task<JArray> GetTaskComments(int task_id){
 			return this.Get("/v2.1/Tasks/" + task_id + "/Comments").AsJson<JArray>();
 		}
 		
@@ -1242,7 +1242,7 @@ namespace InsightlySDK{
 		/// <param name='comment'>
 		/// The comment to add.
 		/// </param>
-		public JObject AddTaskComment(int task_id, JObject comment){
+		public Task<JObject> AddTaskComment(int task_id, JObject comment){
 			return this.Post("/v2.1/Tasks/" + task_id + "/Comments").WithBody(comment).AsJson<JObject>();
 		}
 		
@@ -1255,7 +1255,7 @@ namespace InsightlySDK{
 		/// <param name='team_id'>
 		/// <c>TEAM_ID</c> of desired team.
 		/// </param>
-		public JArray GetTeamMembers(int team_id){
+		public Task<JArray> GetTeamMembers(int team_id){
 			return this.Get("/v2.1/TeamMembers/teamid=" + team_id).AsJson<JArray>();
 		}
 		
@@ -1268,7 +1268,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// Desired team member's id.
 		/// </param>
-		public JObject GetTeamMember(int id){
+		public Task<JObject> GetTeamMember(int id){
 			return this.Get("/v2.1/TeamMembers/" + id).AsJson<JObject>();
 		}
 		
@@ -1281,7 +1281,7 @@ namespace InsightlySDK{
 		/// <param name='team_member'>
 		/// The team member to add.
 		/// </param>
-		public JObject AddTeamMember(JObject team_member){
+		public Task<JObject> AddTeamMember(JObject team_member){
 			return this.Post("/v2.1/TeamMembers").WithBody(team_member).AsJson<JObject>();
 		}
 		
@@ -1304,7 +1304,7 @@ namespace InsightlySDK{
 		/// <param name='team_member'>
 		/// The team member to update.
 		/// </param>
-		public JObject UpdateTeamMember(JObject team_member){
+		public Task<JObject> UpdateTeamMember(JObject team_member){
 			return this.Put("/v2.1/TeamMembers").WithBody(team_member).AsJson<JObject>();
 		}
 		
@@ -1326,7 +1326,7 @@ namespace InsightlySDK{
 		/// <param name='filters'>
 		/// List of OData filter statements to apply.
 		/// </param>/
-		public JArray GetTeams(int? top=null, int? skip=null,
+		public Task<JArray> GetTeams(int? top=null, int? skip=null,
 		                       string order_by=null, List<string> filters=null){
 			var request = this.Get("/v2.1/Teams");
 			BuildODataQuery(request, top: top, skip: skip, order_by: order_by, filters: filters);
@@ -1342,7 +1342,7 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// <c>TEAM_ID</c> of desired team.
 		/// </param>
-		public JObject GetTeam(int id){
+		public Task<JObject> GetTeam(int id){
 			return this.Get("/v2.1/Teams/" + id).AsJson<JObject>();
 		}
 		
@@ -1355,7 +1355,7 @@ namespace InsightlySDK{
 		/// <param name='team'>
 		/// Team.
 		/// </param>
-		public JObject AddTeam(JObject team){
+		public Task<JObject> AddTeam(JObject team){
 			var request = this.Request("/v2.1/Teams");
 			
 			if(IsValidId(team["TEAM_ID"])){
@@ -1384,7 +1384,7 @@ namespace InsightlySDK{
 		/// <returns>
 		/// This account's users.
 		/// </returns>
-		public JArray GetUsers(){
+		public Task<JArray> GetUsers(){
 			return this.Get ("/v2.1/Users/").AsJson<JArray>();
 		}
 
@@ -1397,11 +1397,11 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// Desired user's numeric id.
 		/// </param>
-		public JObject GetUser(int id){
+		public Task<JObject> GetUser(int id){
 			return this.Get("/v2.1/Users/" + id).AsJson<JObject>();
 		}
 		
-		public void Test(int? top=null){
+		public async Task Test(int? top=null){
 			Console.WriteLine("Testing API .....");
 			
 			Console.WriteLine("Testing authentication");
@@ -1409,7 +1409,7 @@ namespace InsightlySDK{
 			int passed = 0;
 			int failed = 0;
 			
-			var currencies = this.GetCurrencies();
+			var currencies = await this.GetCurrencies();
 			if(currencies.Count > 0){
 				Console.WriteLine("Authentication passed...");
 				passed += 1;
@@ -1420,7 +1420,7 @@ namespace InsightlySDK{
 			
 			int user_id = 0;
 			try{
-				var users = this.GetUsers();
+                var users = await this.GetUsers();
 				JObject user = users[0].Value<JObject>();
 				user_id = user["USER_ID"].Value<int>();
 				Console.WriteLine("PASS: GetUsers, found " + users.Count + " users.");
@@ -1433,7 +1433,7 @@ namespace InsightlySDK{
 			
 			// Test GetContacts()
 			try{
-				var contacts = this.GetContacts(order_by: "DATE_UPDATED_UTC desc", top: top);
+                var contacts = await this.GetContacts(order_by: "DATE_UPDATED_UTC desc", top: top);
 				Console.WriteLine("PASS: GetContacts(), found " + contacts.Count + " contacts.");
 				passed += 1;
 				
@@ -1443,7 +1443,7 @@ namespace InsightlySDK{
 					
 					// Test GetContactEmails()
 					try{
-						var emails = this.GetContactEmails(contact_id);
+                        var emails = await this.GetContactEmails(contact_id);
 						Console.WriteLine("PASS: GetContactEmails(), found " + emails.Count + " emails.");
 						passed += 1;
 					}
@@ -1454,7 +1454,7 @@ namespace InsightlySDK{
 					
 					// Test GetContactNotes()
 					try{
-						var notes = this.GetContactNotes(contact_id);
+                        var notes = await this.GetContactNotes(contact_id);
 						Console.WriteLine("PASS: GetContactNotes(), found " + notes.Count + " notes.");
 						passed += 1;
 					}
@@ -1465,7 +1465,7 @@ namespace InsightlySDK{
 
 					// Test GetContactTasks()
 					try{
-						var tasks = this.GetContactTasks(contact_id);
+                        var tasks = await this.GetContactTasks(contact_id);
 						Console.WriteLine("PASS: GetContactTasks(), found " + tasks.Count + " tasks.");
 						passed += 1;
 					}
@@ -1486,7 +1486,7 @@ namespace InsightlySDK{
 				contact["SALUTATION"] = "Mr";
 				contact["FIRST_NAME"] = "Testy";
 				contact["LAST_NAME"] = "McTesterson";
-				contact = this.AddContact(contact);
+                contact = await this.AddContact(contact);
 				Console.WriteLine("PASS: AddContact()");
 				passed += 1;
 				
@@ -1509,7 +1509,7 @@ namespace InsightlySDK{
 			
 			// Test GetCountries()
 			try{
-				var countries = this.GetCountries();
+                var countries = await this.GetCountries();
 				Console.WriteLine("PASS: GetCountries(), found " + countries.Count + " countries.");
 				passed += 1;
 			}
@@ -1520,7 +1520,7 @@ namespace InsightlySDK{
 			
 			// Test GetCurrencies()
 			try{
-				currencies = this.GetCurrencies();
+                currencies = await this.GetCurrencies();
 				Console.WriteLine("PASS: GetCurrencies(), found " + currencies.Count + " currencies.");
 				passed += 1;
 			}
@@ -1531,7 +1531,7 @@ namespace InsightlySDK{
 			
 			// Test GetCustomFields()
 			try{
-				var custom_fields = this.GetCustomFields();
+                var custom_fields = await this.GetCustomFields();
 				Console.WriteLine("PASS: GetCustomFields(), found " + custom_fields.Count + " custom fields.");
 				passed += 1;
 			}
@@ -1542,7 +1542,7 @@ namespace InsightlySDK{
 			
 			// Test GetEmails()
 			try{
-				var emails = this.GetEmails();
+                var emails = await this.GetEmails();
 				Console.WriteLine("PASS: GetEmails(), found " + emails.Count + " emails.");
 				passed += 1;
 			}
@@ -1553,7 +1553,7 @@ namespace InsightlySDK{
 			
 			// Test GetEvents()
 			try{
-				var events = this.GetEvents(top: top);
+                var events = await this.GetEvents(top: top);
 				Console.WriteLine("PASS: GetEvents(), found " + events.Count + " events.");
 				passed += 1;
 			}
@@ -1573,7 +1573,7 @@ namespace InsightlySDK{
 				_event["OWNER_USER_ID"] = user_id;
 				_event["ALL_DAY"] = false;
 				_event["PUBLICLY_VISIBLE"] = true;
-				_event = this.AddEvent(_event);
+                _event = await this.AddEvent(_event);
 				Console.WriteLine("PASS: AddEvent");
 				passed += 1;
 				
@@ -1595,7 +1595,7 @@ namespace InsightlySDK{
 			
 			// Test GetFileCategories()
 			try{
-				var categories = this.GetFileCategories();
+                var categories = await this.GetFileCategories();
 				Console.WriteLine("PASS: GetFileCategories(), found " + categories.Count + " categories.");
 				passed += 1;
 			}
@@ -1610,7 +1610,7 @@ namespace InsightlySDK{
 				category["CATEGORY_NAME"] = "Test Category";
 				category["ACTIVE"] = true;
 				category["BACKGROUND_COLOR"] = "000000";
-				category = this.AddFileCategory(category);
+                category = await this.AddFileCategory(category);
 				Console.WriteLine("PASS: AddFileCategory()");
 				passed += 1;
 				
@@ -1633,7 +1633,7 @@ namespace InsightlySDK{
 			
 			// Test GetNotes()
 			try{
-				var notes = this.GetNotes();
+                var notes = await this.GetNotes();
 				Console.WriteLine("PASS: GetNotes(), found " + notes.Count + " notes.");
 				passed += 1;
 			}
@@ -1644,7 +1644,7 @@ namespace InsightlySDK{
 			
 			// Test GetOpportunities
 			try{
-				var opportunities = this.GetOpportunities(order_by: "DATE_UPDATED_UTC desc", top: top);
+                var opportunities = await this.GetOpportunities(order_by: "DATE_UPDATED_UTC desc", top: top);
 				Console.WriteLine("PASS: GetOpportunities(), found " + opportunities.Count + " opportunities.");
 				passed += 1;
 				
@@ -1654,7 +1654,7 @@ namespace InsightlySDK{
 					
 					// Test GetOpportunityEmails()
 					try{
-						var emails = this.GetOpportunityEmails(opportunity_id);
+                        var emails = await this.GetOpportunityEmails(opportunity_id);
 						Console.WriteLine("PASS: GetOpportunityEmails(), found " + emails.Count + " emails.");
 						passed += 1;
 					}
@@ -1665,7 +1665,7 @@ namespace InsightlySDK{
 					
 					// Test GetOpportunityNotes()
 					try{
-						var notes = this.GetOpportunityNotes(opportunity_id);
+                        var notes = await this.GetOpportunityNotes(opportunity_id);
 						Console.WriteLine("PASS: GetOpportunityNotes(), found " + notes.Count + " notes.");
 						passed += 1;
 					}
@@ -1676,7 +1676,7 @@ namespace InsightlySDK{
 					
 					// Test GetOpportunityTasks()
 					try{
-						var tasks = this.GetOpportunityTasks(opportunity_id);
+                        var tasks = await this.GetOpportunityTasks(opportunity_id);
 						Console.WriteLine("PASS: GetOpportunityTasks(), found " + tasks.Count + " tasks.");
 						passed += 1;
 					}
@@ -1687,7 +1687,7 @@ namespace InsightlySDK{
 					
 					// Test GetOpportunityStateHistory()
 					try{
-						var history = this.GetOpportunityStateHistory(opportunity_id);
+                        var history = await this.GetOpportunityStateHistory(opportunity_id);
 						Console.WriteLine("PASS: GetOpportunityStateHistory(), found " + history.Count + " states in history.");
 						passed += 1;
 					}
@@ -1704,7 +1704,7 @@ namespace InsightlySDK{
 			
 			// Test GetOpportunityCategories()
 			try{
-				var categories = this.GetOpportunityCategories();
+                var categories = await this.GetOpportunityCategories();
 				Console.WriteLine("PASS: GetOpportunityCategories(), found " + categories.Count + " categories.");
 				passed += 1;				
 			}
@@ -1719,7 +1719,7 @@ namespace InsightlySDK{
 				category["CATEGORY_NAME"] = "Test Category";
 				category["ACTIVE"] = true;
 				category["BACKGROUND_COLOR"] = "000000";
-				category = this.AddFileCategory(category);
+                category = await this.AddFileCategory(category);
 				Console.WriteLine("PASS: AddOpportuntityCategory()");
 				passed += 1;
 				
@@ -1741,7 +1741,7 @@ namespace InsightlySDK{
 			
 			// Test GetOpportunityStateReasons()
 			try{
-				var reasons = this.GetOpportunityStateReasons();
+                var reasons = await this.GetOpportunityStateReasons();
 				Console.WriteLine("PASS: GetOpportunityStateReasons(), found " + reasons.Count + " reasons.");
 				passed += 1;
 			}
@@ -1752,7 +1752,7 @@ namespace InsightlySDK{
 			
 			// Test GetOrganizations()
 			try{
-				var organizations = this.GetOrganizations(top: top, order_by: "DATE_UPDATED_UTC desc");
+                var organizations = await this.GetOrganizations(top: top, order_by: "DATE_UPDATED_UTC desc");
 				Console.WriteLine("PASS: GetOrganizations(), found " + organizations.Count + " organizations.");
 				passed += 1;
 				
@@ -1762,7 +1762,7 @@ namespace InsightlySDK{
 					
 					// Test GetOrganizationEmails();
 					try{
-						var emails = this.GetOrganizationEmails(organization_id);
+                        var emails = await this.GetOrganizationEmails(organization_id);
 						Console.WriteLine("PASS: GetOrganizationEmails(), found " + emails.Count + " emails.");
 						passed += 1;
 					}
@@ -1773,7 +1773,7 @@ namespace InsightlySDK{
 					
 					// Test GetOrganizationNotes();
 					try{
-						var notes = this.GetOrganizationNotes(organization_id);
+                        var notes = await this.GetOrganizationNotes(organization_id);
 						Console.WriteLine("PASS: GetOrganizationNotes(), found " + notes.Count + " notes.");
 						passed += 1;
 					}
@@ -1784,7 +1784,7 @@ namespace InsightlySDK{
 					
 					// Test GetOrganizationTasks();
 					try{
-						var tasks = this.GetOrganizationTasks(organization_id);
+                        var tasks = await this.GetOrganizationTasks(organization_id);
 						Console.WriteLine("PASS: GetOrganizationTasks(), found " + tasks.Count + " tasks.");
 						passed += 1;
 					}
@@ -1804,7 +1804,7 @@ namespace InsightlySDK{
 				var organization = new JObject();
 				organization["ORGANISATION_NAME"] = "Foo Corp";
 				organization["BACKGROUND"] = "Details";
-				organization = this.AddOrganization(organization);
+                organization = await this.AddOrganization(organization);
 				Console.WriteLine("PASS: AddOrganization()");
 				passed += 1;
 				
@@ -1826,7 +1826,7 @@ namespace InsightlySDK{
 			
 			// Test GetPipelines()
 			try{
-				var pipelines = this.GetPipelines();
+                var pipelines = await this.GetPipelines();
 				Console.WriteLine("PASS: GetPipelines(), found " + pipelines.Count + " pipelines.");
 				passed += 1;
 			}catch(Exception){
@@ -1836,7 +1836,7 @@ namespace InsightlySDK{
 			
 			// Test GetPipelineStages()
 			try{
-				var stages = this.GetPipelineStages();
+                var stages = await this.GetPipelineStages();
 				Console.WriteLine("PASS: GetPipelineStages(), found " + stages.Count + " pipeline stages.");
 				passed += 1;
 			}
@@ -1847,7 +1847,7 @@ namespace InsightlySDK{
 			
 			// Test GetProjects()
 			try{
-				var projects = this.GetProjects(top: top, order_by: "DATE_UPDATED_UTC desc");
+                var projects = await this.GetProjects(top: top, order_by: "DATE_UPDATED_UTC desc");
 				Console.WriteLine("PASS: GetProjects(), found " + projects.Count + " projects.");
 				passed += 1;
 				
@@ -1857,7 +1857,7 @@ namespace InsightlySDK{
 					
 					// Test GetProjectEmails
 					try{
-						var emails = this.GetProjectEmails(project_id);
+                        var emails = await this.GetProjectEmails(project_id);
 						Console.WriteLine("PASS: GetProjectEmails(), found " + emails.Count + " emails.");
 						passed += 1;
 					}
@@ -1868,7 +1868,7 @@ namespace InsightlySDK{
 					
 					// Test GetProjectNotes
 					try{
-						var notes = this.GetProjectNotes(project_id);
+                        var notes = await this.GetProjectNotes(project_id);
 						Console.WriteLine("PASS: GetProjectNotes(), found " + notes.Count + " notes.");
 						passed += 1;
 					}
@@ -1879,7 +1879,7 @@ namespace InsightlySDK{
 					
 					// Test GetProjectTasks
 					try{
-						var emails = this.GetProjectTasks(project_id);
+                        var emails = await this.GetProjectTasks(project_id);
 						Console.WriteLine("PASS: GetProjectTasks(), found " + emails.Count + " tasks.");
 						passed += 1;
 					}
@@ -1896,7 +1896,7 @@ namespace InsightlySDK{
 			
 			// Test GetProjectCategories
 			try{
-				var categories = this.GetProjectCategories();
+                var categories = await this.GetProjectCategories();
 				Console.WriteLine("PASS: GetProjectCategories(), found " + categories.Count + " categories.");
 				passed += 1;
 			}
@@ -1911,7 +1911,7 @@ namespace InsightlySDK{
 				category["CATEGORY_NAME"] = "Test Category";
 				category["ACTIVE"] = true;
 				category["BACKGROUND_COLOR"] = "000000";
-				category = this.AddProjectCategory(category);
+                category = await this.AddProjectCategory(category);
 				Console.WriteLine("PASS: AddProjectCategory()");
 				passed += 1;
 				
@@ -1933,7 +1933,7 @@ namespace InsightlySDK{
 			
 			// Test GetRelationships()
 			try{
-				var relationships = this.GetRelationships();
+                var relationships = await this.GetRelationships();
 				Console.WriteLine("PASS: getRelationships(), found " + relationships.Count + " relationships.");
 				passed += 1;
 			}
@@ -1944,7 +1944,7 @@ namespace InsightlySDK{
 			
 			// Test GetTasks()
 			try{
-				var tasks = this.GetTasks(top: top, order_by: "DUE_DATE desc");
+                var tasks = await this.GetTasks(top: top, order_by: "DUE_DATE desc");
 				Console.WriteLine("PASS: GetTasks(), found " + tasks.Count + " tasks.");
 				passed += 1;
 			}
@@ -1955,7 +1955,7 @@ namespace InsightlySDK{
 			
 			// Test GetTeams
 			try{
-				var teams = this.GetTeams();
+                var teams = await this.GetTeams();
 				Console.WriteLine("PASS: GetTeams(), found " + teams.Count + " teams.");
 				passed += 1;
 
@@ -1964,7 +1964,7 @@ namespace InsightlySDK{
 					
 					// Test GetTeamMembers
 					try{
-						var team_members = this.GetTeamMembers(team["TEAM_ID"].Value<int>());
+                        var team_members = await this.GetTeamMembers(team["TEAM_ID"].Value<int>());
 						Console.WriteLine("PASS: GetTeamMembers(), found " + team_members.Count + " team members.");
 						passed += 1;
 					}
