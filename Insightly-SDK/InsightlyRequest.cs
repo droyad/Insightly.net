@@ -7,14 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace InsightlySDK{
-	public enum HTTPMethod {
-		GET,
-		PUT,
-		POST,
-		DELETE
-	}
-	
-	public class InsightlyRequest{
+    public class InsightlyRequest{
 		public InsightlyRequest(string api_key, string url_path){
 			this.method = HTTPMethod.GET;
 			this.api_key = api_key;
@@ -50,7 +43,7 @@ namespace InsightlySDK{
 		}
 		
 		public async Task<T> AsJson<T>(){
-			return JsonConvert.DeserializeObject<T>(await this.AsString());
+			return await JsonConvert.DeserializeObjectAsync<T>(await this.AsString());
 		}
 		
 		public async Task<string> AsString(){

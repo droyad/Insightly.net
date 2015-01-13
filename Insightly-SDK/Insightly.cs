@@ -138,8 +138,8 @@ namespace InsightlySDK{
 		/// <param name='id'>
 		/// CONTACT_ID of desired contact.
 		/// </param>
-		public Task<JObject> GetContact(int id){
-			return this.Get("/v2.1/Contacts/" + id).AsJson<JObject>();
+		public Task<Contact> GetContact(int id){
+            return this.Get("/v2.1/Contacts/" + id).AsJson<Contact>();
 		}
 		
 		/// <summary>
